@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Preventive Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="" />
+    <meta name="author" content="notgoodsolution" />
+    <link rel="shortcut icon" type="image/png" href="img/ico.png" />
+
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="owlcarousel/assets/owl.carousel.min.css" />
+
+    <script src="js/jquery.min.js"></script>
+    <script src="owlcarousel/owl.carousel.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="navbar-fixed-top">
+        <div class="container">
+          <table style="width: 100%; height: 50px">
+            <tr>
+              <td style="text-align: left; width: 30%">
+                <img src="img/aisin.svg" width="40%" alt="loggo-aisin" />
+              </td>
+              <td style="text-align: center; width: 40%">
+                <div class="dropdown">
+                  <h1><%= data.part %> PREVENTIVE MAINTENANCE</h1>
+                  <div class="dropdown-content">
+                    <li><a href="/dies">DIES</a></li>
+                    <li><a href="/doorframe">DOORFRAME</a></li>
+                    <li><a href="/machine">MACHINE</a></li>
+                    <li><a href="/jig">JIG</a></li>
+                  </div>
+                </div>
+              </td>
+              <td style="text-align: right; width: 30%">
+                <h2 id="date"></h2>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </header>
+
+    <div style="padding-top: 70px"></div>
+
+    <section>
+      <!-- <div class="owl-carousel"> -->
+      <div id="content-1"></div>
+      <!-- <div id="content-2"></div>
+        <div id="content-3"></div> -->
+      <!-- </div> -->
+    </section>
+  </body>
+  <footer>
+    <div class="footer-flex">
+      <div style="background: #f4b617">&nbsp;</div>
+      <div>On Monitor</div>
+      <div style="background: #ff0000">&nbsp;</div>
+      <div>Preventive Soon</div>
+      <div style="background: #c106fa">&nbsp;</div>
+      <div>Need Preventive</div>
+    </div>
+  </footer>
+</html>
+
+<script>
+  var socket = io.connect();
+  var length = 0;
+
+  socket.on("data_prev_machine", function (data) {
+    var length = data.length;
+
+    var table = "";
+    var style_status = "";
+    let x = 1;
+    let sequence = 1;
+    let length_predict = 1;
+
+    data.forEach((element) => {
+      if (x == 1) {
+        table +=
+          "<table  cellspacing='0' cellpadding='0' class='container-table'>";
+        table += "<thead>";
+        table += "<th class='grey'>NO</th>";
+        table += "<th class='grey'>LINE</th>";
+        table += "<th class='grey'>NAME</th>";
+        table += "<th class='grey'>PLAN PREV. HOURS</th>";
+        table += "<th class='grey'>RUNNING HOURS</th>";
+        table += "<th class='grey'>STATUS</th>";
+        table += "</thead>";
+        table += "<tbody>";
+      }
+
+      table += "<tr style='font-weight:600;'>";
+      table += "<td style='text-align: center;'>" + length_predict + "</td>";
+      table +=
+        "<td style='text-align: center;'>" + element.CHR_PART_CODE + "</td>";
+      table +=
+        "<td style='text-align: left;'>" + element.CHR_PART_NAME + "</td>";
+
+      if (element.FLG_TYPE_PREV == 3) {
+        if (element.INT_SMALL_PREVENTIVE == 0) {
+          if (element.STATUS_DISPLAY == 1) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='warning'>" + element.INT_COUNT + "</td>";
+            table += "<td>3 MONTH PREVENTIVE</td>";
+          } else if (element.STATUS_DISPLAY == 2) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='danger'>" + element.INT_COUNT + "</td>";
+            table += "<td>3 MONTH PREVENTIVE</td>";
+          } else if (element.STATUS_DISPLAY == 3) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='advanced'>" + element.INT_COUNT + "</td>";
+            table += "<td>3 MONTH PREVENTIVE</td>";
+          }
+        } else if (element.INT_SMALL_PREVENTIVE == 1) {
+          if (element.STATUS_DISPLAY == 1) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='warning'>" + element.INT_COUNT + "</td>";
+            table += "<td>6 MONTH PREVENTIVE</td>";
+          } else if (element.STATUS_DISPLAY == 2) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='danger'>" + element.INT_COUNT + "</td>";
+            table += "<td>6 MONTH PREVENTIVE</td>";
+          } else if (element.STATUS_DISPLAY == 3) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='advanced'>" + element.INT_COUNT + "</td>";
+            table += "<td>6 MONTH PREVENTIVE</td>";
+          }
+        } else if (element.INT_SMALL_PREVENTIVE == 2) {
+          if (element.STATUS_DISPLAY == 1) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='warning'>" + element.INT_COUNT + "</td>";
+            table += "<td>3 MONTH PREVENTIVE</td>";
+          } else if (element.STATUS_DISPLAY == 2) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='danger'>" + element.INT_COUNT + "</td>";
+            table += "<td>3 MONTH PREVENTIVE</td>";
+          } else if (element.STATUS_DISPLAY == 3) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='advanced'>" + element.INT_COUNT + "</td>";
+            table += "<td>3 MONTH PREVENTIVE</td>";
+          }
+        } else if (element.INT_SMALL_PREVENTIVE == 3) {
+          if (element.STATUS_DISPLAY == 1) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='warning'>" + element.INT_COUNT + "</td>";
+            table += "<td>12 MONTH PREVENTIVE</td>";
+          } else if (element.STATUS_DISPLAY == 2) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='danger'>" + element.INT_COUNT + "</td>";
+            table += "<td>12 MONTH PREVENTIVE</td>";
+          } else if (element.STATUS_DISPLAY == 3) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='advanced'>" + element.INT_COUNT + "</td>";
+            table += "<td>12 MONTH PREVENTIVE</td>";
+          }
+        }
+      } else if (element.FLG_TYPE_PREV == 6) {
+        if (element.INT_SMALL_PREVENTIVE == 0) {
+          if (element.STATUS_DISPLAY == 1) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='warning'>" + element.INT_COUNT + "</td>";
+            table += "<td>6 MONTH PREVENTIVE</td>";
+          } else if (element.STATUS_DISPLAY == 2) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='danger'>" + element.INT_COUNT + "</td>";
+            table += "<td>6 MONTH PREVENTIVE</td>";
+          } else if (element.STATUS_DISPLAY == 3) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='advanced'>" + element.INT_COUNT + "</td>";
+            table += "<td>6 MONTH PREVENTIVE</td>";
+          }
+        } else if (element.INT_SMALL_PREVENTIVE == 2) {
+          if (element.STATUS_DISPLAY == 1) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='warning'>" + element.INT_COUNT + "</td>";
+            table += "<td>12 MONTH PREVENTIVE</td>";
+          } else if (element.STATUS_DISPLAY == 2) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='danger'>" + element.INT_COUNT + "</td>";
+            table += "<td>12 MONTH PREVENTIVE</td>";
+          } else if (element.STATUS_DISPLAY == 3) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='advanced'>" + element.INT_COUNT + "</td>";
+            table += "<td>12 MONTH PREVENTIVE</td>";
+          }
+        }
+      } else if (element.FLG_TYPE_PREV == 12) {
+        if (element.INT_SMALL_PREVENTIVE == 0) {
+          if (element.STATUS_DISPLAY == 1) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='warning'>" + element.INT_COUNT + "</td>";
+            table += "<td>12 MONTH PREVENTIVE</td>";
+          } else if (element.STATUS_DISPLAY == 2) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='danger'>" + element.INT_COUNT + "</td>";
+            table += "<td>12 MONTH PREVENTIVE</td>";
+          } else if (element.STATUS_DISPLAY == 3) {
+            table += "<td>" + element.INT_STROKE_BIG_PREVENTIVE + "</td>";
+            table += "<td class='advanced'>" + element.INT_COUNT + "</td>";
+            table += "<td>12 MONTH PREVENTIVE</td>";
+          }
+        }
+      }
+
+      table += "</tr>";
+
+      if (length_predict == length) {
+        table += "</tbody>";
+        table += "</table>";
+
+        // var owl = $(".owl-carousel");
+        // owl.owlCarousel({
+        //   items: 1,
+        //   loop: true,
+        //   dots: false,
+        //   margin: 12,
+        //   autoplay: true,
+        //   autoplayTimeout: 5000,
+        //   autoplayHoverPause: true,
+        // });
+      }
+
+      x++;
+      length_predict++;
+    });
+    $("#content-" + sequence).html(table);
+  });
+
+  startTime();
+
+  function startTime() {
+    var today = new Date();
+    var year = today.getFullYear();
+    var month = today.getMonth();
+
+    month = parseInt(month) + 1;
+
+    if (month < 10) {
+      month = "0" + month;
+    }
+    var date = today.getDate();
+    if (date < 10) {
+      date = "0" + date;
+    }
+    var h = today.getHours();
+    var m = today.getMinutes();
+    var s = today.getSeconds();
+    if (h < 10) {
+      h = "0" + h;
+    }
+    if (m < 10) {
+      m = "0" + m;
+    }
+    if (s < 10) {
+      s = "0" + s;
+    }
+    $("#date").html(
+      year + "-" + month + "-" + date + " ~ " + h + ":" + m + ":" + s
+    );
+    var t = setTimeout(startTime, 500);
+  }
+</script>

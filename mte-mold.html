@@ -1,0 +1,219 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Preventive Dashboard</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="notgoodsolution">
+
+        <link href="css/bootstrap.css" rel="stylesheet">
+        <link href="css/main.css" rel="stylesheet">
+        <link href="css/font-style.css" rel="stylesheet">
+        <script type="text/javascript" src="js/jquery-latest.js"></script>
+        <script type="text/javascript" src="js/bootstrap.js"></script>
+        <link href="css/my-slider.css" rel="stylesheet"/>
+        <script type="text/javascript" src="js/ism-2.2.min.js"></script>
+        <link rel="shortcut icon" type="image/png" href="img/preventive.png"/>
+        <script src="/socket.io/socket.io.js"></script>
+
+        <style type="text/css">
+            body {
+                padding-top: 40px;
+            }
+        </style>
+    </head>
+    <body class="body-layout">
+        <!-- NAVIGATION MENU -->
+        <div class="navbar-nav navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://192.168.0.231/AIS_PP/index.php" style="text-align: center;"><img src="img/logo30.png" alt=""></a>
+                </div> 
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/dies"><i class="icon-home icon-white"></i> Dies Mte</a></li>
+                        <li class="active"><a href="/mold"><i class="icon-home icon-white"></i><strong> Mold Mte</strong></a></li>
+                        <li><a href="/doorframe"><i class="icon-folder-open icon-white"></i> DF Mte</a></li>
+                        <li><a href="/machine"><i class="icon-th icon-white"></i> Machine Mte</a></li>
+                        <li><a href="/jig"><i class="icon-th icon-white"></i> Jig Mte</a></li>
+                        <li><a href="/diesmold"><i class="icon-th icon-white"></i> Dies & Mold Mte</a></li>
+                        <li><a href="/electrode"><i class="icon-th icon-white"></i> Electrode</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div>
+            
+            <h1>MOLD PREVENTIVE MAINTENANCE</h1>
+            <table class="container-table" id="table_prev" ></table>
+
+            <div style="width:300px; height:60px; color:#262626;  position: fixed; z-index: 10; bottom: 0px; left: 0px; height: 90px;">
+                <div class="col-sm-6 col-lg-12">
+                    <div style="height:70px;width:900px;background: white;padding:5px;position: absolute;">
+                        <span style="font-weight: 800;font-size: 1.5em;margin-left:10px;">L E G E N D S</span>
+                        <table style="width:100%;">
+                            <tr style="border-style: solid;border-width: 10px;border-color: white;">
+                                <td style="background:yellow;width:10%;border-style: solid;border-width: 0px;border-color: white;"></td>
+                                <td style="width:2%"></td>
+                                <td style="text-align:left;font-weight:600;width:20%;">Need to preventive</td>
+                                <!-- <td style="width:2%"></td> -->
+                                <td style="background:red;width:10%;border-style: solid;border-width: 0px;border-color: white;"></td>
+                                <td style="width:2%"></td>
+                                <td style="text-align:left;font-weight:600;width:25%;">Must be preventive soon</td>
+                                <!-- <td style="width:3%"></td> -->
+                                <td style="background:purple;width:10%;border-style: solid;border-width: 0px;border-color: white;"></td>
+                                <td style="width:2%"></td>
+                                <td style="text-align:left;font-weight:600;width:30%;">> Prev. Stroke Planning</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>	
+            </div>
+        </div>
+    </body>
+    <footer>
+    </footer>
+</html>
+
+<!-- <style>
+.orangeblink {
+  -webkit-animation: orangeblink 2.0s infinite;  /* Safari 4+ */
+  -moz-animation: orangeblink 2.0s infinite;  /* Fx 5+ */
+  -o-animation: orangeblink 2.0s infinite;  /* Opera 12+ */
+  animation: orangeblink 2.0s infinite;  /* IE 10+, Fx 29+ */
+}
+
+@-webkit-keyframes orangeblink {
+  0%, 49% {
+    background-color: orange;
+  }
+  50%, 100% {
+    background-color: #333333;
+  }
+}
+
+.redblink {
+  -webkit-animation: redblink 2.0s infinite;  /* Safari 4+ */
+  -moz-animation: redblink 2.0s infinite;  /* Fx 5+ */
+  -o-animation: redblink 2.0s infinite;  /* Opera 12+ */
+  animation: redblink 2.0s infinite;  /* IE 10+, Fx 29+ */
+}
+
+@-webkit-keyframes redblink {
+  0%, 49% {
+    background-color: red;
+  }
+  50%, 100% {
+    background-color: #333333;
+  }
+}
+
+.red_blood_blink {
+  -webkit-animation: redblink 1.0s infinite;  /* Safari 4+ */
+  -moz-animation: redblink 1.0s infinite;  /* Fx 5+ */
+  -o-animation: redblink 1.0s infinite;  /* Opera 12+ */
+  animation: redblink 1.0s infinite;  /* IE 10+, Fx 29+ */
+}
+
+@-webkit-keyframes red_blood_blink {
+  0%, 49% {
+    background-color: rgb(158, 0, 0);
+  }
+  50%, 100% {
+    background-color: #333333;
+  }
+}
+</style> -->
+
+<script>
+    function formatNumber(num) {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
+
+    var socket = io.connect();
+
+    socket.on('data_prev_mold', function (data) {
+        var row_count = data.length;
+        var param_part = [];
+
+        var table_prev = "<th class='grey'>No</th>";
+        table_prev += "<th class='grey'>Part Code</th>";
+        table_prev += "<th class='grey'>Model</th>";
+        table_prev += "<th class='grey'>Part Name</th>";
+        table_prev += "<th class='grey'>Plan Prev. Stroke</th>";
+        table_prev += "<th class='grey'>Running Stroke</th>";
+        table_prev += "<th class='grey'>Status</th>";
+        
+        var i;
+        var norow = 1 ;    
+        for (i = 0; i < row_count; ++i) {
+            table_prev += "<tr>";            
+            table_prev += "<td data-toggle='modal' style='text-align: center;cursor: pointer; cursor: hand;font-weight: 600;'>" + norow + "</td>";
+            table_prev += "<td data-toggle='modal' style='text-align: center;cursor: pointer; cursor: hand;'><strong>" + data[i].CHR_PART_CODE + "</strong></td>";
+            table_prev += "<td data-toggle='modal' style='text-align: center;cursor: pointer; cursor: hand;'>" + data[i].CHR_MODEL + "</td>";
+            table_prev += "<td data-toggle='modal' style='text-align: left;cursor: pointer; cursor: hand;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + data[i].CHR_NAME + "</td>";
+            table_prev += "<td data-toggle='modal' style='text-align: right;cursor: pointer; cursor: hand;'>" + formatNumber(data[i].INT_STROKE_BIG_PREVENTIVE) + "&nbsp;&nbsp;&nbsp;</td>";
+            // table_prev += "<td data-toggle='modal' style='text-align: left;cursor: pointer; cursor: hand;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + data[i].INT_REMAIN_SMALL + "</td>";
+            
+            // 1 - 3 small preventive 
+            // 4 - 6 big preventive
+            if (data[i].STATUS_DISPLAY == 1) {
+                table_prev += "<td data-toggle='modal' style='text-align: right;cursor: pointer; cursor: hand; color: black; background: yellow;'><strong>" + formatNumber(data[i].STROKE) + "</strong>&nbsp;&nbsp;&nbsp;</td>";
+                table_prev += "<td data-toggle='modal' style='text-align: center;cursor: pointer; cursor: hand; color: white;'>SMALL PREVENTIVE</td>";
+            } else if (data[i].STATUS_DISPLAY == 2) {
+                table_prev += "<td data-toggle='modal' style='text-align: right;cursor: pointer; cursor: hand; color: white; background: red;'><strong>" + formatNumber(data[i].STROKE) + "</strong>&nbsp;&nbsp;&nbsp;</td>";
+                table_prev += "<td data-toggle='modal' style='text-align: center;cursor: pointer; cursor: hand; color: white;'>SMALL PREVENTIVE</td>";
+            } else if (data[i].STATUS_DISPLAY == 3) {
+                table_prev += "<td data-toggle='modal' style='text-align: right;cursor: pointer; cursor: hand; color: white; background: purple;'><strong>" + formatNumber(data[i].STROKE) + "</strong>&nbsp;&nbsp;&nbsp;</td>";
+                table_prev += "<td data-toggle='modal' style='text-align: center;cursor: pointer; cursor: hand; color: white;'>SMALL PREVENTIVE</td>";
+            } else if (data[i].STATUS_DISPLAY == 4) {
+                table_prev += "<td data-toggle='modal' style='text-align: right;cursor: pointer; cursor: hand; color: black; background: yellow;'><strong>" + formatNumber(data[i].STROKE) + "</strong>&nbsp;&nbsp;&nbsp;</td>";
+                table_prev += "<td data-toggle='modal' style='text-align: center;cursor: pointer; cursor: hand; color: white;'>BIG PREVENTIVE</td>";
+            } else if (data[i].STATUS_DISPLAY == 5) {
+                table_prev += "<td data-toggle='modal' style='text-align: right;cursor: pointer; cursor: hand; color: white; background: red;'><strong>" + formatNumber(data[i].STROKE) + "</strong>&nbsp;&nbsp;&nbsp;</td>";
+                table_prev += "<td data-toggle='modal' style='text-align: center;cursor: pointer; cursor: hand; color: white;'>BIG PREVENTIVE</td>";
+            } else if (data[i].STATUS_DISPLAY == 6) {
+                table_prev += "<td data-toggle='modal' style='text-align: right;cursor: pointer; cursor: hand; color: white; background: purple;'><strong>" + formatNumber(data[i].STROKE) + "</strong>&nbsp;&nbsp;&nbsp;</td>";
+                table_prev += "<td data-toggle='modal' style='text-align: center;cursor: pointer; cursor: hand; color: white;'>BIG PREVENTIVE</td>";
+            } else {
+                table_prev += "<td data-toggle='modal' style='text-align: right;cursor: pointer; cursor: hand; color: white;'><strong>" + formatNumber(data[i].STROKE) + "</strong>&nbsp;&nbsp;&nbsp;</td>";
+                table_prev += "<td data-toggle='modal' style='text-align: center;cursor: pointer; cursor: hand; color: white;'>-</td>";
+            }
+
+            table_prev += "</tr>"; 
+            norow ++;
+            param_part = 'table_detail' + data[i].norow;            
+        }	
+        document.getElementById("table_prev").innerHTML = table_prev;              
+    });
+
+
+    startTime();
+
+        function startTime() {
+            var today = new Date();
+            var h = today.getHours();
+            var m = today.getMinutes();
+            var s = today.getSeconds();
+            m = checkTime(m);
+            s = checkTime(s);
+            document.getElementById('clock').innerHTML = h + ":" + m; //+ ":" + s;
+            var t = setTimeout(startTime, 500);
+        }
+
+        function checkTime(v) {
+            if (v < 10) {
+                v = "0" + v;
+            }
+            ;  // add zero in front of numbers < 10
+            return v;
+        }
+</script>
+<!-- <script>setTimeout(function(){window.location.href='http://192.168.0.234:8585/dies'},15000);</script> -->
