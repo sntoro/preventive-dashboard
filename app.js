@@ -56,9 +56,20 @@ app.get("/jig", function (req, res) {
 });
 
 app.get("/mold", function (req, res) {
-  // eslint-disable-next-line no-undef
-  res.sendFile("mte-mold.html", { root: __dirname });
+  res.render("mte-mold", {
+    data: {
+      part: "MOLD",
+    },
+  });
 });
+
+// app.get("/diesmold", function (req, res) {
+//   res.render("dies-mte-mold", {
+//     data: {
+//       part: "DIESMOLD",
+//     },
+//   });
+// });
 
 app.get("/diesmold", function (req, res) {
   // eslint-disable-next-line no-undef

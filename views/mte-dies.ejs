@@ -33,6 +33,7 @@
                     <li><a href="/doorframe">DOORFRAME</a></li>
                     <li><a href="/machine">MACHINE</a></li>
                     <li><a href="/jig">JIG</a></li>
+                    <li><a href="/mold">MOLD</a></li>
                   </div>
                 </div>
               </td>
@@ -86,8 +87,7 @@
 
     data.forEach((element) => {
       if (x == 1) {
-        table +=
-          "<table  cellspacing='0' cellpadding='0' class='container-table'>";
+        table += "<table  cellspacing='0' cellpadding='0' class='container-table'>";
         table += "<thead>";
         table += "<th class='grey'>NO</th>";
         table += "<th class='grey'>PART CODE</th>";
@@ -102,27 +102,18 @@
 
       table += "<tr style='font-weight:600;'>";
       table += "<td style='text-align: center;'>" + length_predict + "</td>";
-      table +=
-        "<td style='text-align: center;'><strong>" +
-        element.code +
-        "</strong></td>";
-      table +=
-        "<td style='text-align: center;'>" + element.work_center + "</td>";
+      table += "<td style='text-align: center;'><strong>" + element.code + "</strong></td>";
+      table += "<td style='text-align: center;'>" + element.work_center + "</td>";
       table += "<td style='text-align: center;'>" + element.model + "</td>";
       table += "<td style='text-align: left;'>" + element.name + "</td>";
-      table +=
-        "<td style='text-align: center;'>" +
-        formatNumber(element.stroke_big) +
-        "</td>";
+      table += "<td style='text-align: center;'>" + formatNumber(element.stroke_big) + "</td>";
 
       if (element.stat == 1) {
-        table +=
-          "<td class='warning'>" + formatNumber(element.stroke) + "</td>";
+        table += "<td class='warning'>" + formatNumber(element.stroke) + "</td>";
       } else if (element.stat == 2) {
         table += "<td class='danger'>" + formatNumber(element.stroke) + "</td>";
       } else if (element.stat == 3) {
-        table +=
-          "<td class='advanced'>" + formatNumber(element.stroke) + "</td>";
+        table += "<td class='advanced'>" + formatNumber(element.stroke) + "</td>";
       }
 
       table += "</tr>";

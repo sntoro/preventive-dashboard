@@ -76,7 +76,7 @@
   var socket = io.connect();
   var length = 0;
 
-  socket.on("data_prev_df", function (data) {
+  socket.on("data_prev_mold", function (data) {
     var length = data.length;
 
     var table = "";
@@ -84,6 +84,7 @@
     let x = 1;
     let sequence = 1;
     let length_predict = 1;
+    let status_small_big = false;
 
     data.forEach((element) => {
       if (x == 1) {
@@ -96,6 +97,7 @@
         table += "<th class='grey'>NAME</th>";
         table += "<th class='grey'>PLAN PREV. STROKE</th>";
         table += "<th class='grey'>RUNNING STROKE</th>";
+        table += "<th class='grey'>STATUS</th>";
         table += "</thead>";
         table += "<tbody>";
       }
@@ -104,23 +106,50 @@
       table += "<td style='text-align: center;'>" + length_predict + "</td>";
       table +=
         "<td style='text-align: center;'><strong>" +
-        element.code +
+        element.CHR_PART_CODE +
         "</strong></td>";
-      table += "<td style='text-align: center;'>" + element.model + "</td>";
-      table += "<td style='text-align: left;'>" + element.name + "</td>";
+      table += "<td style='text-align: center;'>" + element.CHR_MODEL + "</td>";
+      table += "<td style='text-align: left;'>" + element.CHR_NAME + "</td>";
       table +=
         "<td style='text-align: center;'>" +
-        formatNumber(element.stroke_big) +
+        formatNumber(element.INT_STROKE_BIG_PREVENTIVE) +
         "</td>";
 
-      if (element.stat == 1) {
-        table +=
-          "<td class='warning'>" + formatNumber(element.stroke) + "</td>";
-      } else if (element.stat == 2) {
-        table += "<td class='danger'>" + formatNumber(element.stroke) + "</td>";
-      } else if (element.stat == 3) {
-        table +=
-          "<td class='advanced'>" + formatNumber(element.stroke) + "</td>";
+      if (
+        parseInt(element.STATUS_DISPLAY) > 0 &&
+        parseInt(element.STATUS_DISPLAY) <= 3
+      ) {
+        status_small_big = "SMALL PREVENTIVE";
+      } else if (
+        parseInt(element.STATUS_DISPLAY) >= 4 &&
+        parseInt(element.STATUS_DISPLAY) <= 6
+      ) {
+        status_small_big = "BIG PREVENTIVE";
+      } else {
+        status_small_big = "-";
+      }
+
+      if (element.STATUS_DISPLAY == 1) {
+        table += "<td class='warning'>" + formatNumber(element.STROKE) + "</td>";
+        table += "<td style='text-align: center;'>" + status_small_big + "</td>";
+      } else if (element.STATUS_DISPLAY == 2) {
+        table += "<td class='danger'>" + formatNumber(element.STROKE) + "</td>";
+        table += "<td style='text-align: center;'>" + status_small_big + "</td>";
+      } else if (element.STATUS_DISPLAY == 3) {
+        table += "<td class='advanced'>" + formatNumber(element.STROKE) + "</td>";
+        table += "<td style='text-align: center;'>" + status_small_big + "</td>";
+      } else if (element.STATUS_DISPLAY == 4) {
+        table += "<td class='warning'>" + formatNumber(element.STROKE) + "</td>";
+        table += "<td style='text-align: center;'>" + status_small_big + "</td>";
+      } else if (element.STATUS_DISPLAY == 5) {
+        table += "<td class='danger'>" + formatNumber(element.STROKE) + "</td>";
+        table += "<td style='text-align: center;'>" + status_small_big + "</td>";
+      } else if (element.STATUS_DISPLAY == 6) {
+        table += "<td class='advanced'>" + formatNumber(element.STROKE) + "</td>";
+        table += "<td style='text-align: center;'>" + status_small_big + "</td>";
+      } else {
+        table += "<td class='grey'>" + formatNumber(element.STROKE) + "</td>";
+        table += "<td style='text-align: center;'>" + status_small_big + "</td>";
       }
 
       table += "</tr>";
