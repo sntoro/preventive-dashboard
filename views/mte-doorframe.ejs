@@ -34,7 +34,8 @@
                     <li><a href="/machine">MACHINE</a></li>
                     <li><a href="/jig">JIG</a></li>
                     <li><a href="/mold">MOLD</a></li>
-                  </div>
+                    <li><a href="/diesmold">DIESMOLD</a></li>
+                    <li><a href="/electrode">ELECTRODE</a></li></div>
                 </div>
               </td>
               <td style="text-align: right; width: 30%">
@@ -50,9 +51,6 @@
 
     <section>
       <div class="owl-carousel">
-        <div id="content-1"></div>
-        <div id="content-2"></div>
-        <!-- <div id="content-3"></div> -->
       </div>
     </section>
   </body>
@@ -74,85 +72,105 @@
   }
 
   var socket = io.connect();
-  var length = 0;
 
+  var owl = $(".owl-carousel");
+  owl.owlCarousel({
+    items: 1,
+    loop: true,
+    dots: false,
+    margin: 12,
+    autoplay: true,
+    autoplayTimeout: 8000,
+    autoplayHoverPause: false,
+  });
+
+  var data_before = 0;
   socket.on("data_prev_df", function (data) {
-    var length = data.length;
-
-    var table = "";
-    var style_status = "";
+    let length = data.length;
+    let table = "";
     let x = 1;
     let sequence = 1;
     let length_predict = 1;
+    let slide_total = Math.ceil(length / 10);
+
+    if (slide_total != data_before && slide_total != 0) {
+      let rem = $(".display-data");
+      owl.trigger("remove.owl.carousel", [rem]);
+      owl.trigger("refresh.owl.carousel");
+      rem.remove();
+
+      for (var y = 1; y <= slide_total; y++) {
+        let e = $("<div></div>");
+        e.attr("id", "content-data-" + y);
+        e.attr("class", "display-data");
+        owl.trigger("add.owl.carousel", [e]);
+      }
+      data_before = slide_total;
+    }
+
+    if (slide_total == 0) {
+      let rem = $(".display-data");
+      owl.trigger("remove.owl.carousel", [rem]);
+      owl.trigger("refresh.owl.carousel");
+      rem.remove();
+
+      let e = $(
+        "<div><h2 class='danger' style='text-align: center;padding:15px 0 15px 0;'>No Data</h2></div>"
+      );
+      e.attr("id", "content-data-1");
+      e.attr("class", "display-data");
+      owl.trigger("add.owl.carousel", [e]);
+      owl.trigger("refresh.owl.carousel");
+    }
 
     data.forEach((element) => {
       if (x == 1) {
-        table +=
-          "<table  cellspacing='0' cellpadding='0' class='container-table'>";
-        table += "<thead>";
+        table += "<table  cellspacing='0' cellpadding='0' class='container-table'>";
+        table += "<thead><tr>";
         table += "<th class='grey'>NO</th>";
         table += "<th class='grey'>PART CODE</th>";
         table += "<th class='grey'>MODEL</th>";
         table += "<th class='grey'>NAME</th>";
         table += "<th class='grey'>PLAN PREV. STROKE</th>";
         table += "<th class='grey'>RUNNING STROKE</th>";
-        table += "</thead>";
+        table += "</tr></thead>";
         table += "<tbody>";
       }
 
       table += "<tr style='font-weight:600;'>";
       table += "<td style='text-align: center;'>" + length_predict + "</td>";
-      table +=
-        "<td style='text-align: center;'><strong>" +
-        element.code +
-        "</strong></td>";
+      table += "<td style='text-align: center;'><strong>" + element.code + "</strong></td>";
       table += "<td style='text-align: center;'>" + element.model + "</td>";
       table += "<td style='text-align: left;'>" + element.name + "</td>";
-      table +=
-        "<td style='text-align: center;'>" +
-        formatNumber(element.stroke_big) +
-        "</td>";
+      table += "<td style='text-align: center;'>" + formatNumber(element.stroke_big) + "</td>";
 
       if (element.stat == 1) {
-        table +=
-          "<td class='warning'>" + formatNumber(element.stroke) + "</td>";
+        table += "<td class='warning'>" + formatNumber(element.stroke) + "</td>";
       } else if (element.stat == 2) {
         table += "<td class='danger'>" + formatNumber(element.stroke) + "</td>";
       } else if (element.stat == 3) {
-        table +=
-          "<td class='advanced'>" + formatNumber(element.stroke) + "</td>";
+        table += "<td class='advanced'>" + formatNumber(element.stroke) + "</td>";
       }
 
       table += "</tr>";
 
-      x++;
-
-      if (x == 11) {
+      if (x == 10) {
         table += "</tbody>";
         table += "</table>";
 
-        $("#content-" + sequence).html(table);
+        $("#content-data-" + sequence).html(table);
+
         table = "";
         sequence++;
-        x = 1;
+        x = 0;
       }
+      x++;
 
       if (length_predict == length) {
         table += "</tbody>";
         table += "</table>";
-
-        $("#content-" + sequence).html(table);
-
-        var owl = $(".owl-carousel");
-        owl.owlCarousel({
-          items: 1,
-          loop: true,
-          dots: false,
-          margin: 12,
-          autoplay: true,
-          autoplayTimeout: 8000,
-          autoplayHoverPause: true,
-        });
+        $("#content-data-" + sequence).html(table);
+        owl.trigger("refresh.owl.carousel");
       }
 
       length_predict++;

@@ -34,6 +34,8 @@
                     <li><a href="/machine">MACHINE</a></li>
                     <li><a href="/jig">JIG</a></li>
                     <li><a href="/mold">MOLD</a></li>
+                    <li><a href="/diesmold">DIESMOLD</a></li>
+                    <li><a href="/electrode">ELECTRODE</a></li></div>
                   </div>
                 </div>
               </td>
@@ -49,11 +51,7 @@
     <div style="padding-top: 70px"></div>
 
     <section>
-      <!-- <div class="owl-carousel"> -->
-      <div id="content-1"></div>
-      <!-- <div id="content-2"></div>
-        <div id="content-3"></div> -->
-      <!-- </div> -->
+      <div class="owl-carousel"></div>
     </section>
   </body>
   <footer>
@@ -70,16 +68,56 @@
 
 <script>
   var socket = io.connect();
-  var length = 0;
 
+  var owl = $(".owl-carousel");
+  owl.owlCarousel({
+    items: 1,
+    loop: true,
+    dots: false,
+    margin: 12,
+    autoplay: true,
+    autoplayTimeout: 8000,
+    autoplayHoverPause: false,
+  });
+
+  var data_before = 0;
   socket.on("data_prev_machine", function (data) {
-    var length = data.length;
-
-    var table = "";
-    var style_status = "";
+    let length = data.length;
+    let table = "";
     let x = 1;
     let sequence = 1;
     let length_predict = 1;
+    let slide_total = Math.ceil(length / 10);
+
+    if (slide_total != data_before && slide_total != 0) {
+      let rem = $(".display-data");
+      owl.trigger("remove.owl.carousel", [rem]);
+      owl.trigger("refresh.owl.carousel");
+      rem.remove();
+
+      for (var y = 1; y <= slide_total; y++) {
+        let e = $("<div></div>");
+        e.attr("id", "content-data-" + y);
+        e.attr("class", "display-data");
+        owl.trigger("add.owl.carousel", [e]);
+      }
+      data_before = slide_total;
+    }
+
+    if (slide_total == 0) {
+      let rem = $(".display-data");
+      owl.trigger("remove.owl.carousel", [rem]);
+      owl.trigger("refresh.owl.carousel");
+      rem.remove();
+
+      let e = $(
+        "<div><h2 class='danger' style='text-align: center;padding:15px 0 15px 0;'>No Data</h2></div>"
+      );
+      e.attr("id", "content-data-1");
+      e.attr("class", "display-data");
+      owl.trigger("add.owl.carousel", [e]);
+      owl.trigger("refresh.owl.carousel");
+    }
 
     data.forEach((element) => {
       if (x == 1) {
@@ -211,26 +249,27 @@
 
       table += "</tr>";
 
-      if (length_predict == length) {
+      if (x == 10) {
         table += "</tbody>";
         table += "</table>";
 
-        // var owl = $(".owl-carousel");
-        // owl.owlCarousel({
-        //   items: 1,
-        //   loop: true,
-        //   dots: false,
-        //   margin: 12,
-        //   autoplay: true,
-        //   autoplayTimeout: 5000,
-        //   autoplayHoverPause: true,
-        // });
+        $("#content-data-" + sequence).html(table);
+
+        table = "";
+        sequence++;
+        x = 0;
+      }
+      x++;
+
+      if (length_predict == length) {
+        table += "</tbody>";
+        table += "</table>";
+        $("#content-data-" + sequence).html(table);
+        owl.trigger("refresh.owl.carousel");
       }
 
-      x++;
       length_predict++;
     });
-    $("#content-" + sequence).html(table);
   });
 
   startTime();

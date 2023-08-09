@@ -9,9 +9,10 @@ const io = require("socket.io")(server, {
     origin: "*",
   },
 });
-const EventEmitter = require("events");
-const eventEmitter = new EventEmitter();
-eventEmitter.setMaxListeners(10);
+// const EventEmitter = require("events");
+// const eventEmitter = new EventEmitter();
+// eventEmitter.setMaxListeners(10);
+require('events').EventEmitter.defaultMaxListeners = 15;
 
 app.use(express.static("public"));
 app.set("view engine", "ejs");
@@ -63,22 +64,20 @@ app.get("/mold", function (req, res) {
   });
 });
 
-// app.get("/diesmold", function (req, res) {
-//   res.render("dies-mte-mold", {
-//     data: {
-//       part: "DIESMOLD",
-//     },
-//   });
-// });
-
 app.get("/diesmold", function (req, res) {
-  // eslint-disable-next-line no-undef
-  res.sendFile("mte-dies_mold.html", { root: __dirname });
+  res.render("mte-dies-mold", {
+    data: {
+      part: "DIESMOLD",
+    },
+  });
 });
 
 app.get("/electrode", function (req, res) {
-  // eslint-disable-next-line no-undef
-  res.sendFile("mte-electrode.html", { root: __dirname });
+  res.render("mte-electrode", {
+    data: {
+      part: "ELECTRODE",
+    },
+  });
 });
 
 const sqlConfig = {
@@ -92,8 +91,8 @@ const sqlConfig = {
     idleTimeoutMillis: 30000,
   },
   options: {
-    encrypt: false, // for azure
-    trustServerCertificate: true, // change to true for local dev / self-signed certs
+    encrypt: false,
+    enableArithAbort: true,
   },
 };
 

@@ -35,7 +35,7 @@
                     <li><a href="/jig">JIG</a></li>
                     <li><a href="/mold">MOLD</a></li>
                     <li><a href="/diesmold">DIESMOLD</a></li>
-                    <li><a href="/electrode">ELECTRODE</a></li></div>
+                    <li><a href="/electrode">ELECTRODE</a></li>
                   </div>
                 </div>
               </td>
@@ -73,6 +73,7 @@
   }
 
   var socket = io.connect();
+
   var owl = $(".owl-carousel");
   owl.owlCarousel({
     items: 1,
@@ -85,7 +86,7 @@
   });
 
   var data_before = 0;
-  socket.on("data_prev_jig", function (data) {
+  socket.on("data_prev_electrode", function (data) {
     let length = data.length;
     let table = "";
     let x = 1;
@@ -125,43 +126,33 @@
 
     data.forEach((element) => {
       if (x == 1) {
-        table +=
-          "<table  cellspacing='0' cellpadding='0' class='container-table'>";
-        table += "<thead>";
+        table += "<table  cellspacing='0' cellpadding='0' class='container-table'>";
+        table += "<thead><tr>";
         table += "<th class='grey'>NO</th>";
         table += "<th class='grey'>PART CODE</th>";
         table += "<th class='grey'>LINE</th>";
         table += "<th class='grey'>MODEL</th>";
         table += "<th class='grey'>NAME</th>";
-        table += "<th class='grey'>PLAN PREV. STROKE</th>";
-        table += "<th class='grey'>RUNNING STROKE</th>";
-        table += "</thead>";
+        table += "<th class='grey'>USED DATE</th>";
+        table += "<th class='grey'>TOTAL DAYS</th>";
+        table += "</tr></thead>";
         table += "<tbody>";
       }
 
       table += "<tr style='font-weight:600;'>";
       table += "<td style='text-align: center;'>" + length_predict + "</td>";
-      table +=
-        "<td style='text-align: center;'><strong>" +
-        element.code +
-        "</strong></td>";
-      table +=
-        "<td style='text-align: center;'>" + element.work_center + "</td>";
+      table += "<td style='text-align: center;'><strong>" + element.code + "</strong></td>";
+      table += "<td style='text-align: center;'><strong>" + element.work_center + "</strong></td>";
       table += "<td style='text-align: center;'>" + element.model + "</td>";
       table += "<td style='text-align: left;'>" + element.name + "</td>";
-      table +=
-        "<td style='text-align: center;'>" +
-        formatNumber(element.stroke_big) +
-        "</td>";
+      table += "<td style='text-align: center;'>" + element.last_used + "</td>";
 
       if (element.stat == 1) {
-        table +=
-          "<td class='warning'>" + formatNumber(element.stroke) + "</td>";
+        table += "<td class='warning'>" + formatNumber(element.count_day) + "</td>";
       } else if (element.stat == 2) {
-        table += "<td class='danger'>" + formatNumber(element.stroke) + "</td>";
+        table += "<td class='danger'>" + formatNumber(element.count_day) + "</td>";
       } else if (element.stat == 3) {
-        table +=
-          "<td class='advanced'>" + formatNumber(element.stroke) + "</td>";
+        table += "<td class='advanced'>" + formatNumber(element.count_day) + "</td>";
       }
 
       table += "</tr>";
