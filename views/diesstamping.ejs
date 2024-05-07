@@ -20,22 +20,23 @@
     <header>
       <div class="navbar-fixed-top">
         <div class="container">
-          <table style="width: 100%; height: 50px">
+          <table style="width: 100%">
             <tr>
               <td style="text-align: left; width: 30%">
-                <img src="img/aisin.svg" width="40%" alt="loggo-aisin" />
+                <img
+                  src="img/aisin.svg"
+                  style="max-width: 80%"
+                  alt="loggo-aisin"
+                />
               </td>
-              <td style="text-align: center; width: 40%">
+              <td style="text-align: center">
                 <div class="dropdown">
-                  <h1><%= data.part %> PREVENTIVE MAINTENANCE</h1>
+                  <h1>PREVENTIVE <%= data.part %></h1>
                   <div class="dropdown-content">
-                    <li><a href="/dies">DIES</a></li>
-                    <li><a href="/doorframe">DOORFRAME</a></li>
-                    <li><a href="/machine">MACHINE</a></li>
-                    <li><a href="/jig">JIG</a></li>
+                    <li><a href="/diesstamping">STAMPING</a></li>
+                    <li><a href="/diesdoorframe">DOORFRAME</a></li>
                     <li><a href="/mold">MOLD</a></li>
-                    <li><a href="/diesmold">DIESMOLD</a></li>
-                    <li><a href="/electrode">ELECTRODE</a></li></div>
+                    <li><a href="/jig">JIG</a></li>
                   </div>
                 </div>
               </td>
@@ -51,23 +52,36 @@
     <div style="padding-top: 70px"></div>
 
     <section>
-      <div class="owl-carousel">
-      </div>
+      <div class="owl-carousel"></div>
     </section>
   </body>
   <footer>
     <div class="footer-flex">
-      <div style="background: #f4b617">&nbsp;</div>
-      <div>On Monitor</div>
-      <div style="background: #ff0000">&nbsp;</div>
-      <div>Preventive Soon</div>
-      <div style="background: #c106fa">&nbsp;</div>
-      <div>Need Preventive</div>
+      <div class="danger" style="padding: 5px 0 5px 0">
+        <span>Need Preventive</span>
+      </div>
+      <div class="warning" style="padding: 5px 0 5px 0">
+        <span>Preventive Soon</span>
+      </div>
+      <div class="primary" style="padding: 5px 0 5px 0">
+        <span>On Monitor</span>
+      </div>
     </div>
   </footer>
 </html>
 
 <script>
+  var current = new Date();
+  var future = new Date();
+  future.setTime(future.getTime() + 3600000); //3600000 = 1 hour
+  future.setMinutes(0);
+  future.setSeconds(0);
+
+  var timeout = future.getTime() - current.getTime();
+  setTimeout(function () {
+    window.location.reload(true);
+  }, timeout);
+
   function formatNumber(num) {
     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
   }
@@ -86,16 +100,13 @@
   });
 
   var data_before = 0;
-  socket.on("data_prev_mold", function (data) {
+  socket.on("prev_diesstamping", function (data) {
     let length = data.length;
     let table = "";
     let x = 1;
     let sequence = 1;
     let length_predict = 1;
     let slide_total = Math.ceil(length / 10);
-
-    var style_status = "";
-    let status_small_big = false;
 
     if (slide_total != data_before && slide_total != 0) {
       let rem = $(".display-data");
@@ -119,7 +130,7 @@
       rem.remove();
 
       let e = $(
-        "<div><h2 class='danger' style='text-align: center;padding:15px 0 15px 0;'>No Data</h2></div>"
+        "<div><h2 class='warning' style='text-align: center;padding:15px 0 15px 0;'>No Data</h2></div>"
       );
       e.attr("id", "content-data-1");
       e.attr("class", "display-data");
@@ -133,12 +144,11 @@
           "<table  cellspacing='0' cellpadding='0' class='container-table'>";
         table += "<thead>";
         table += "<th class='grey'>NO</th>";
-        table += "<th class='grey'>PART CODE</th>";
-        table += "<th class='grey'>MODEL</th>";
+        table += "<th class='grey'>TOOL</th>";
         table += "<th class='grey'>NAME</th>";
-        table += "<th class='grey'>PLAN PREV. STROKE</th>";
-        table += "<th class='grey'>RUNNING STROKE</th>";
-        table += "<th class='grey'>STATUS</th>";
+        table += "<th class='grey'>MODEL</th>";
+        table += "<th class='grey'>STD. STROKE</th>";
+        table += "<th class='grey'>RUN. STROKE</th>";
         table += "</thead>";
         table += "<tbody>";
       }
@@ -146,51 +156,30 @@
       table += "<tr style='font-weight:600;'>";
       table += "<td style='text-align: center;'>" + length_predict + "</td>";
       table +=
-        "<td style='text-align: center;'><strong>" +
-        element.CHR_PART_CODE +
-        "</strong></td>";
+        "<td style='text-align: center;'>" + element.CHR_TOOL_CODE + "</td>";
+      table +=
+        "<td style='text-align: center;'>" + element.CHR_TOOL_NAME + "</td>";
       table += "<td style='text-align: center;'>" + element.CHR_MODEL + "</td>";
-      table += "<td style='text-align: left;'>" + element.CHR_NAME + "</td>";
       table +=
         "<td style='text-align: center;'>" +
-        formatNumber(element.INT_STROKE_BIG_PREVENTIVE) +
+        formatNumber(element.INT_STD_STROKE) +
         "</td>";
 
-      if (
-        parseInt(element.STATUS_DISPLAY) > 0 &&
-        parseInt(element.STATUS_DISPLAY) <= 3
-      ) {
-        status_small_big = "SMALL PREVENTIVE";
-      } else if (
-        parseInt(element.STATUS_DISPLAY) >= 4 &&
-        parseInt(element.STATUS_DISPLAY) <= 6
-      ) {
-        status_small_big = "BIG PREVENTIVE";
-      } else {
-        status_small_big = "-";
-      }
-
-      if (element.STATUS_DISPLAY == 1) {
-        table += "<td class='warning'>" + formatNumber(element.STROKE) + "</td>";
-        table += "<td style='text-align: center;'>" + status_small_big + "</td>";
-      } else if (element.STATUS_DISPLAY == 2) {
-        table += "<td class='danger'>" + formatNumber(element.STROKE) + "</td>";
-        table += "<td style='text-align: center;'>" + status_small_big + "</td>";
-      } else if (element.STATUS_DISPLAY == 3) {
-        table += "<td class='advanced'>" + formatNumber(element.STROKE) + "</td>";
-        table += "<td style='text-align: center;'>" + status_small_big + "</td>";
-      } else if (element.STATUS_DISPLAY == 4) {
-        table += "<td class='warning'>" + formatNumber(element.STROKE) + "</td>";
-        table += "<td style='text-align: center;'>" + status_small_big + "</td>";
-      } else if (element.STATUS_DISPLAY == 5) {
-        table += "<td class='danger'>" + formatNumber(element.STROKE) + "</td>";
-        table += "<td style='text-align: center;'>" + status_small_big + "</td>";
-      } else if (element.STATUS_DISPLAY == 6) {
-        table += "<td class='advanced'>" + formatNumber(element.STROKE) + "</td>";
-        table += "<td style='text-align: center;'>" + status_small_big + "</td>";
-      } else {
-        table += "<td class='grey'>" + formatNumber(element.STROKE) + "</td>";
-        table += "<td style='text-align: center;'>" + status_small_big + "</td>";
+      if (element.ORDER_STATUS_PREVENTIVE == 1) {
+        table +=
+          "<td class='danger'>" +
+          formatNumber(element.INT_ACTUAL_STROKE_H_MINUS_1) +
+          "</td>";
+      } else if (element.ORDER_STATUS_PREVENTIVE == 2) {
+        table +=
+          "<td class='warning'>" +
+          formatNumber(element.INT_ACTUAL_STROKE_H_MINUS_1) +
+          "</td>";
+      } else if (element.ORDER_STATUS_PREVENTIVE == 3) {
+        table +=
+          "<td class='primary'>" +
+          formatNumber(element.INT_ACTUAL_STROKE_H_MINUS_1) +
+          "</td>";
       }
 
       table += "</tr>";
@@ -246,9 +235,8 @@
     if (s < 10) {
       s = "0" + s;
     }
-    $("#date").html(
-      year + "-" + month + "-" + date + " ~ " + h + ":" + m + ":" + s
-    );
+    //year + "-" + month + "-" + date + " ~ " +
+    $("#date").html(h + ":" + m + ":" + s);
     var t = setTimeout(startTime, 500);
   }
 </script>

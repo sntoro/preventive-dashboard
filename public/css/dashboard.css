@@ -177,7 +177,7 @@ table {
 footer {
     flex: 0 0 auto;
     bottom: 0px;
-    height: 50px;
+    left: 0px;
     position: fixed;
     z-index: 5;
 }
@@ -192,16 +192,16 @@ footer {
 footer .footer-flex {
     display: flex;
     justify-content:space-between;
-    padding-right: 15px;
-    padding-left: 15px;
+    padding:0 5px 0 5px;
     margin-right: auto;
     margin-left: auto;
 }
 
 footer .footer-flex > div {
     width: 100%;
-    margin: .5em .5em .5em 0;
+    margin: 0 .5em 0 0;
     font-size: 1.2em;
+    text-align: center;
     font-weight: 700;
 }
 
@@ -214,16 +214,15 @@ footer .footer-flex > div {
   display: none;
   position: absolute;
   background-color: #f1f1f1;
-  font-size: 1.5em;
-  min-width: 500px;
+  min-width: 200px;
   z-index: 1;
-  padding-bottom:20px;
+  padding-bottom:10px;
 }
 
 .dropdown-content a {
   color: black;
   font-weight: 600;
-  padding: 12px 12px 12px 12px;
+  padding: 2px 0px 2px 0px;
   text-decoration: none;
   display: block;
 }
