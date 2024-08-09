@@ -1,30 +1,28 @@
 require("dotenv").config();
-const http = require("http");
-const https = require('https');
-const fs = require('fs');
+const https = require("https");
 
-var privateKey  = fs.readFileSync('./certificate/aisin-indonesia.co.id.key', 'utf8');
-var certificate = fs.readFileSync('./certificate/aisin-indonesia.co.id.crt', 'utf8');
-var credentials = {key: privateKey, cert: certificate};
+const fs = require("fs");
+var privateKey = fs.readFileSync(process.env.CERTIFICATE_KEY,"utf8");
+var certificate = fs.readFileSync(process.env.CERTIFICATE_CRT,"utf8");
+var credentials = { key: privateKey, cert: certificate };
 
 const express = require("express");
-const sql = require("mssql");
-const app = express();
+const app = (module.exports.app = express());
 
-const server = http.createServer(app);
-// const secureServer = https.createServer(credentials, app);
-
+const server = https.createServer(credentials, app);
 const io = require("socket.io")(server, {
   cors: {
     origin: "*",
   },
 });
 
+const sql = require("mssql");
+const config = require("./config").config;
+
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 
 const port = process.env.PORT;
-const securePort = process.env.PORT_SECURE;
 const interval = process.env.INTERVAL;
 
 app.get("/", function (req, res) {
@@ -63,24 +61,8 @@ app.get("/jig", function (req, res) {
   });
 });
 
-const sqlConfig = {
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-  server: process.env.DB_HOST,
-  pool: {
-    max: 10,
-    min: 0,
-    idleTimeoutMillis: 30000,
-  },
-  options: {
-    encrypt: false,
-    enableArithAbort: true,
-  },
-};
-
 setInterval(function () {
-  sql.connect(sqlConfig, (err) => {
+  sql.connect(config, (err) => {
     if (err) {
       console.log(err);
       return;
@@ -144,6 +126,3 @@ server.listen(port, function () {
   console.log("running on:" + port);
 });
 
-// secureServer.listen(securePort, function () {
-//   console.log("running on:" + securePort);
-// });
