@@ -1,15 +1,15 @@
 require("dotenv").config();
-const https = require("https");
+const http = require("http");
 
-const fs = require("fs");
-var privateKey = fs.readFileSync(process.env.CERTIFICATE_KEY,"utf8");
-var certificate = fs.readFileSync(process.env.CERTIFICATE_CRT,"utf8");
-var credentials = { key: privateKey, cert: certificate };
+// const fs = require("fs");
+// var privateKey = fs.readFileSync(process.env.CERTIFICATE_KEY,"utf8");
+// var certificate = fs.readFileSync(process.env.CERTIFICATE_CRT,"utf8");
+// var credentials = { key: privateKey, cert: certificate };
 
 const express = require("express");
 const app = (module.exports.app = express());
 
-const server = https.createServer(credentials, app);
+const server = http.createServer(app);
 const io = require("socket.io")(server, {
   cors: {
     origin: "*",
